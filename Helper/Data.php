@@ -114,10 +114,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
             $optionsByValue = [];
             foreach($field->getOptions() as $option) {
+                if(!isset($option['value']) || empty($option['value']) || is_array($option['value'])) {
+                    continue;
+                }
                 $optionsByValue[$option['value']] = $option;
             }
 
-            $values = explode(',', $value);
+            $values = explode(',', $value ?? "");
 
             foreach($values as $valueInstance) {
                 $labels[] = isset($optionsByValue[$valueInstance])
@@ -198,7 +201,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @return string
      */
     protected function getFormattedValueLabels(array $labels) {
-        if(count($labels) == 1) {
+        if(!empty($labels) && count($labels) == 1) {
             //if only one value, simply return it
             return '<span class="override-value-hint-label">' .
                 nl2br($this->escaper->escapeHtml($labels[0])) .
